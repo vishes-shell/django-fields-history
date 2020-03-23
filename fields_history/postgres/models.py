@@ -24,4 +24,4 @@ class FieldsHistory(BaseFieldsHistory):
         get_latest_by = "changed_at"
 
     def __str__(self):
-        return f"{self.changes.keys()} are changed for {self.content_object}"
+        return f"{self.history.keys()} are changed for {self.content_object}"

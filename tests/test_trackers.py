@@ -73,3 +73,11 @@ def test_no_history_if_field_not_changed(db, model):
     obj.field = obj.field
     obj.save()
     assert not FieldsHistory.objects.exists()
+
+
+def test_charfield_model(db):
+    obj = G(CharFieldModel, field="value")
+    obj.field = "new_value"
+    obj.save()
+
+    assert obj.get_field_history()[0].value == "value"

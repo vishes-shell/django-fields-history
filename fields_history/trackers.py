@@ -2,6 +2,7 @@ from copy import deepcopy
 from functools import partialmethod
 from typing import Any, Callable, Dict, Iterable, List, Optional, Type
 
+from addict import Dict as ADict
 from django.db import models
 
 from fields_history.models import FieldsHistory
@@ -12,7 +13,7 @@ from .models import FieldHistoryValue
 def _get_field_history(
     obj: models.Model, field: str, **filter_kwargs
 ) -> List[FieldHistoryValue]:
-    to_python: Callable[[str], Any] = obj._meta.get_field(obj).to_python
+    to_python: Callable[[str], Any] = obj._meta.get_field(field).to_python
 
     qs = (
         FieldsHistory.objects.get_for_model_and_field(obj, field)
@@ -36,13 +37,15 @@ class FieldInstanceTracker:
 
     def set_saved_fields(self, fields: Optional[Iterable[str]] = None) -> None:
         if self.obj._state.adding:
-            self._saved_data: Dict[str, Any] = {}
+            self.saved_data: Dict[str, Any] = {}
         elif not fields:
-            self._saved_data = self.current()
+            self.saved_data = self.current()
 
         # preventing mutable fields side effects
-        for field, field_value in self._saved_data.items():
-            self._saved_data[field] = deepcopy(field_value)
+        for field, field_value in self.saved_data.items():
+            self.saved_data[field] = deepcopy(field_value)
+
+        self.saved_data = ADict(self.saved_data)
 
     def current(self, fields: Optional[Iterable[str]] = None) -> Dict[str, Any]:
         """Returns dict of current values for all tracked fields
@@ -59,7 +62,7 @@ class FieldInstanceTracker:
     def previous(self, field: str) -> Optional[Any]:
         """Returns currently saved value of given field
         """
-        return self._saved_data.get(field)
+        return self.saved_data.get(field)
 
 
 class FieldsHistoryTracker:
@@ -114,7 +117,7 @@ class FieldsHistoryTracker:
                     field
                 ).value_to_string
 
-                history[field] = value_to_string(obj)
+                history[field] = value_to_string(tracker.saved_data)
 
             if history:
                 FieldsHistory.objects.create(content_object=obj, history=history)

@@ -19,6 +19,7 @@ keywords = ['packaging', 'poetry']
 [tool.poetry.dependencies]
 python = "^3.6"
 toml = "^0.9"
+addict = "^2.2.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^3.0"
