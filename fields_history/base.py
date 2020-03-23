@@ -1,3 +1,5 @@
+from importlib import import_module
+
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
@@ -12,6 +14,18 @@ def init_object_id_field(object_id_class_or_tuple) -> models.fields.Field:
     else:
         object_id_class = object_id_class_or_tuple
         object_id_kwargs = {}
+
+    if isinstance(object_id_class, str):
+        try:
+            module_path, class_name = object_id_class.rsplit(".", 1)
+        except ValueError as err:
+            raise ImportError(
+                f"{object_id_class} doesn't look like a module path"
+            ) from err
+
+        module = import_module(module_path)
+
+        object_id_class = getattr(module, class_name)
 
     if not issubclass(object_id_class, models.fields.Field):
         raise TypeError()

@@ -25,4 +25,5 @@ def pytest_configure():
         SECRET_KEY="not very secret in tests",
         USE_I18N=True,
         USE_L10N=True,
+        FIELDS_HISTORY_OBJECT_ID_TYPE_SETTING="django.db.models.fields.TextField",
     )
