@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pytest
 from ddf import G, N
 
@@ -81,3 +83,30 @@ def test_charfield_model(db):
     obj.save()
 
     assert obj.get_field_history()[0].value == "value"
+
+
+def test_integer_model(db):
+    obj = G(IntegerFieldModel)
+    value = obj.field
+    obj.field = obj.field + 1
+    obj.save()
+
+    assert obj.get_field_history()[0].value == value
+
+
+def test_datefield_model(db):
+    obj = G(DateFieldModel)
+    value = obj.field
+    obj.field = obj.field + timedelta(days=1)
+    obj.save()
+
+    assert obj.get_field_history()[0].value == value
+
+
+def test_datetimefield_model(db):
+    obj = G(DateTimeFieldModel)
+    value = obj.field
+    obj.field = obj.field + timedelta(days=1, hours=3)
+    obj.save()
+
+    assert obj.get_field_history()[0].value == value
