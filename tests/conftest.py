@@ -17,7 +17,6 @@ def pytest_configure():
             "django.contrib.messages",
             "django.contrib.sessions",
             "django.contrib.sites",
-            "fields_history",
             "fields_history.postgres",
             "tests",
         ),
