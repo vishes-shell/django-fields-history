@@ -26,7 +26,7 @@ def _init_object_id_field(object_id_class_or_tuple) -> models.fields.Field:
         object_id_class = object_id_class_or_tuple
         object_id_kwargs = {}
 
-    if not issubclass(object_id_kwargs, models.fields.Field):
+    if not issubclass(object_id_class, models.fields.Field):
         raise TypeError()
     elif not isinstance(object_id_kwargs, dict):
         raise TypeError()
