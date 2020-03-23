@@ -47,3 +47,13 @@ class MultipleFieldModel(models.Model):
 
     class Meta:
         app_label = "tests"
+
+
+class OneOfManyTrackedFieldModel(models.Model):
+    tracked = models.CharField(max_length=50)
+    not_tracked = models.CharField(max_length=50)
+
+    history_tracker = FieldsHistoryTracker(fields=["tracked"])
+
+    class Meta:
+        app_label = "tests"
