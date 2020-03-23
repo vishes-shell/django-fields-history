@@ -2,10 +2,11 @@ from copy import deepcopy
 from functools import partialmethod
 from typing import Any, Callable, Dict, Iterable, List, Optional, Type
 
-from django.contrib.postgres.fields.jsonb import KeyTransform
 from django.db import models
 
-from .models import FieldHistoryValue, FieldsHistory
+from fields_history.models import FieldsHistory
+
+from .models import FieldHistoryValue
 
 
 def _get_field_history(
@@ -16,8 +17,7 @@ def _get_field_history(
     qs = (
         FieldsHistory.objects.get_for_model_and_field(obj, field)
         .filter(**filter_kwargs)
-        .annotate(value=KeyTransform(field, "history"))
-        .values_list("value", "changed_at")
+        .only_value_and_changed_at(field)
     )
 
     return [
@@ -100,22 +100,24 @@ class FieldsHistoryTracker:
         original_save = obj.save
 
         def save(**kwargs):
+            is_new_object = bool(obj._state.adding)
+
             ret = original_save(**kwargs)
             tracker = getattr(obj, self.attname)
 
-            changes = {}
+            history = {}
             for field in self.fields:
-                if obj._state.adding or not tracker.has_changed(field):
+                if is_new_object or not tracker.has_changed(field):
                     continue
 
                 value_to_string: Callable[[Any], str] = obj._meta.get_field(
                     field
                 ).value_to_string
 
-                changes[field] = value_to_string(getattr(obj, field))
+                history[field] = value_to_string(obj)
 
-            if changes:
-                FieldsHistory.objects.create(content_object=obj, changes=changes)
+            if history:
+                FieldsHistory.objects.create(content_object=obj, history=history)
 
             self._init_tracker(obj)
 
