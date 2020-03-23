@@ -110,3 +110,35 @@ def test_datetimefield_model(db):
     obj.save()
 
     assert obj.get_field_history()[0].value == value
+
+
+@pytest.mark.parametrize(
+    "model", [CharFieldModel, DateFieldModel, DateTimeFieldModel, IntegerFieldModel]
+)
+def test_multiple_changes(db, model):
+    obj = G(model)
+    current_value = obj.field
+
+    new_obj = N(model)
+
+    assert new_obj.field != current_value
+    obj.field = new_obj.field
+    obj.save()
+    obj.field = current_value
+    obj.save()
+
+    assert FieldsHistory.objects.count() == 2
+
+
+def test_get_history_on_specific_field(db):
+    obj = G(MultipleFieldModel)
+
+    obj.first_field = f"new_{obj.first_field}"
+    obj.save()
+
+    obj.second_field = f"new_{obj.first_field}"
+    obj.save()
+    assert FieldsHistory.objects.count() == 2
+
+    assert len(obj.get_first_field_history()) == 1
+    assert len(obj.get_second_field_history()) == 1
