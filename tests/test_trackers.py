@@ -2,7 +2,6 @@ from datetime import timedelta
 
 import pytest
 from ddf import G, N
-
 from fields_history.models import FieldsHistory
 
 from .models import (
@@ -45,6 +44,35 @@ def test_history_on_field_change_save(db, model):
     assert not FieldsHistory.objects.exists()
     obj.save()
     assert FieldsHistory.objects.count() == 1
+
+
+@pytest.mark.parametrize(
+    "model", [CharFieldModel, DateFieldModel, DateTimeFieldModel, IntegerFieldModel]
+)
+def test_history_on_field_change_save_after_get_from_db(db, model):
+    obj = G(model)
+    obj = model.objects.get(pk=obj.pk)
+
+    new_obj = N(model)
+
+    assert new_obj.field != obj.field
+    old_value = obj.field
+    obj.field = new_obj.field
+
+    assert not FieldsHistory.objects.exists()
+    obj.save()
+    assert FieldsHistory.objects.count() == 1
+    assert old_value in {history.value for history in obj.get_field_history()}
+
+
+@pytest.mark.parametrize(
+    "model", [CharFieldModel, DateFieldModel, DateTimeFieldModel, IntegerFieldModel]
+)
+def test_no_history_on_save_after_get_from_db(db, model):
+    obj = G(model)
+    obj = model.objects.get(pk=obj.pk)
+    obj.save()
+    assert not FieldsHistory.objects.exists()
 
 
 def test_no_history_only_on_tracked_fields_change(db):

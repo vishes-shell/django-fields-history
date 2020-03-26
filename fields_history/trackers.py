@@ -4,7 +4,6 @@ from typing import Any, Callable, Dict, Iterable, List, Optional, Type
 
 from addict import Dict as ADict
 from django.db import models
-
 from fields_history.models import FieldsHistory
 
 from .models import FieldHistoryValue
@@ -36,10 +35,7 @@ class FieldInstanceTracker:
         return getattr(self.obj, field)
 
     def set_saved_fields(self, fields: Optional[Iterable[str]] = None) -> None:
-        if self.obj._state.adding:
-            self.saved_data: Dict[str, Any] = {}
-        elif not fields:
-            self.saved_data = self.current()
+        self.saved_data = self.current(fields)
 
         # preventing mutable fields side effects
         for field, field_value in self.saved_data.items():
