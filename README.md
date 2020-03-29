@@ -1,5 +1,8 @@
 # django-fields-history
 
+[![PyPI version](https://badge.fury.io/py/django-fields-history.svg)](https://badge.fury.io/py/django-fields-history)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 A Django app that track history changes in model fields.
 
 __Important note__: currently only one implementation of `FieldsHistory`
