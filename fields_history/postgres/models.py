@@ -1,4 +1,3 @@
-from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.fields.jsonb import KeyTransform
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -16,7 +15,7 @@ class FieldsHistoryQuerySet(models.QuerySet):
 
 
 class FieldsHistory(BaseFieldsHistory):
-    history = JSONField(verbose_name=_("history"))
+    history = models.JSONField(verbose_name=_("history"))
 
     objects = FieldsHistoryManager.from_queryset(FieldsHistoryQuerySet)()
 
