@@ -3,31 +3,28 @@ name = "django-fields-history"
 version = "0.1.2"
 description = "Store model fields history"
 license = "MIT"
-authors = [
-    "Alex Shalynin <a.shalynin@gmail.com>"
-]
+authors = ["Alex Shalynin <a.shalynin@gmail.com>"]
 readme = 'README.md'
 repository = "https://github.com/vishes-shell/django-fields-history"
 homepage = "https://github.com/vishes-shell/django-fields-history"
 keywords = ['django', 'fields', 'history']
 classifiers = [
-    "Framework :: Django",
-    "Environment :: Web Environment",
-    "Intended Audience :: Developers",
-    "Framework :: Django",
-    "Framework :: Django :: 1.11",
-    "Framework :: Django :: 2.0",
-    "Framework :: Django :: 2.1",
-    "Framework :: Django :: 2.2",
-    "Framework :: Django :: 3.0",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
+  "Framework :: Django",
+  "Environment :: Web Environment",
+  "Intended Audience :: Developers",
+  "Framework :: Django",
+  "Framework :: Django :: 1.11",
+  "Framework :: Django :: 2.0",
+  "Framework :: Django :: 2.1",
+  "Framework :: Django :: 2.2",
+  "Framework :: Django :: 3.0",
+  "Framework :: Django :: 4.0",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.6",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
 ]
-packages = [
-    { include = "fields_history" }
-]
+packages = [{ include = "fields_history" }]
 
 [tool.poetry.dependencies]
 python = "^3.6"
