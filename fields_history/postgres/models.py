@@ -1,4 +1,4 @@
-from django.contrib.postgres.fields.jsonb import KeyTransform
+from django.db.models.fields.json import KeyTransform
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
