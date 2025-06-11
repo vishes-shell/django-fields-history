@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-fields-history"
-version = "0.1.5"
+version = "0.1.6"
 description = "Store model fields history"
 license = "MIT"
 authors = ["Alex Shalynin <a.shalynin@gmail.com>"]
