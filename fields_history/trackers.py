@@ -44,8 +44,7 @@ class FieldInstanceTracker:
         self.saved_data = ADict(self.saved_data)
 
     def current(self, fields: Optional[Iterable[str]] = None) -> Dict[str, Any]:
-        """Returns dict of current values for all tracked fields
-        """
+        """Returns dict of current values for all tracked fields"""
         if fields is None:
             fields = self.fields
 
@@ -56,8 +55,7 @@ class FieldInstanceTracker:
         return self.previous(field) != self.get_field_value(field)
 
     def previous(self, field: str) -> Optional[Any]:
-        """Returns currently saved value of given field
-        """
+        """Returns currently saved value of given field"""
         return self.saved_data.get(field)
 
 
@@ -77,6 +75,7 @@ class FieldsHistoryTracker:
             )
         self.name = name
         self.attname = f"_{self.name}"
+        self._patch_save(cls)
         models.signals.class_prepared.connect(self.finalize_class, sender=cls)
 
     def finalize_class(self, sender: Type[models.Model], **kwargs) -> None:
@@ -93,33 +92,32 @@ class FieldsHistoryTracker:
         if not isinstance(instance, self.model_class):
             return  # Only init instances of given model (including children)
         self._init_tracker(instance)
-        self._patch_save(instance)
 
-    def _patch_save(self, obj):
-        original_save = obj.save
+    def _patch_save(self, model):
+        original_save = model.save
 
-        def save(**kwargs):
-            is_new_object = bool(obj._state.adding)
+        def save(instance, **kwargs):
+            is_new_object = bool(instance._state.adding)
 
-            ret = original_save(**kwargs)
-            tracker = getattr(obj, self.attname)
+            ret = original_save(instance, **kwargs)
+            tracker = getattr(instance, self.attname)
 
             history = {}
             for field in self.fields:
                 if is_new_object or not tracker.has_changed(field):
                     continue
 
-                value_to_string: Callable[[Any], str] = obj._meta.get_field(
+                value_to_string: Callable[[Any], str] = instance._meta.get_field(
                     field
                 ).value_to_string
 
                 history[field] = value_to_string(tracker.saved_data)
 
             if history:
-                FieldsHistory.objects.create(content_object=obj, history=history)
+                FieldsHistory.objects.create(content_object=instance, history=history)
 
-            self._init_tracker(obj)
+            self._init_tracker(instance)
 
             return ret
 
-        obj.save = save
+        model.save = save
