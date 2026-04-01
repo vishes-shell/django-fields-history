@@ -42,13 +42,13 @@ assert obj.get_field_history()[0].value == "value"
 
 ## QuickStart
 
-Install `django-fields-history`:
+First, install `django-fields-history`:
 
 ```bash
 pip install django-fields-history
 ```
 
-Add `fields_history.postgres` to `INSTALLED_APPS` (currently only
+Then add `fields_history.postgres` to `INSTALLED_APPS` (currently only
 postgres implementation is supported):
 
 ```python
@@ -58,7 +58,7 @@ INSTALLED_APPS = [
 ]
 ```
 
-And add trackers to your models and specify fields to track:
+And, finally, add trackers to your models and specify fields to track:
 
 ```python
 from field_history.trackers import FieldsHistoryTracker
